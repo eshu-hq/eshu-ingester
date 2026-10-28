@@ -135,7 +135,7 @@ jobs:
       # Total statement coverage floor. May only rise. Measured 100.0% when
       # the floor landed (#11); the finish line is 90%.
       coverage-floor: 100.0
-      run-image: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.image == 'true' || needs.changes.outputs.go == 'true' || needs.changes.outputs.workflow == 'true' }}
+      run-image: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.image == 'true' || needs.changes.outputs.go == 'true' || needs.changes.outputs.workflow == 'true' }}
       image-tag: ci-ingester:ci
       image-context: .
       image-command: |
@@ -144,23 +144,23 @@ jobs:
         from_pinned=$(grep -Ec '^[[:space:]]*FROM [^[:space:]]+@sha256:[0-9a-f]{64}' Dockerfile)
         echo "Dockerfile bases: $from_pinned/$from_total digest-pinned"
         [ "$from_pinned" -ge 1 ] && [ "$from_pinned" -eq "$from_total" ]
-      run-lint: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
-      run-test: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.fixtures == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
-      run-race: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
-      run-shell: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.shell == 'true' }}
+      run-lint: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
+      run-test: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.fixtures == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
+      run-race: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' || needs.changes.outputs.misc == 'true' }}
+      run-shell: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.shell == 'true' }}
       # No boundary gate in this repo; the empty command keeps the lane
       # skipped while the name stays reserved upstream.
       run-boundary: false
       boundary-command: ''
-      run-govulncheck: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.deps == 'true' }}
-      run-gosec: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.workflow == 'true' }}
+      run-govulncheck: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.deps == 'true' }}
+      run-gosec: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.go == 'true' || needs.changes.outputs.deps == 'true' || needs.changes.outputs.workflow == 'true' }}
       # Findings fail scheduled runs so the failure()-gated issue job
       # below is reachable; PR runs stay advisory green.
       gosec-fail-on-findings: ${{ github.event_name == 'schedule' }}
       # This repo's measured zero-finding baseline (see #6); the reusable
       # default is older.
       gosec-version: v2.30.0
-      run-actionlint: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.workflow == 'true' }}
+      run-actionlint: ${{ needs.changes.result != 'success' || github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.workflow == 'true' }}
 
   scheduled-findings:
     # The reusable runs contents:read-only, so weekly issue filing stays a
@@ -177,8 +177,8 @@ jobs:
     steps:
       - name: file or update the weekly findings issue
         run: |
-          title="[ci] weekly scan findings $(date -u +%F)"
-          body="Scheduled govulncheck/gosec failed on ${{ github.sha }}. See run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}."
+          title="[ci] weekly CI failure $(date -u +%F)"
+          body="Scheduled CI failed on ${{ github.sha }} (any go-ci lane may be the cause; scanners are the usual suspects). See run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}."
           open=$(gh issue list --search "$title in:title" --state open --json number --jq '.[0].number')
           if [ -n "$open" ] && [ "$open" != "null" ]; then
             gh issue comment "$open" --body "$body"
@@ -188,16 +188,17 @@ jobs:
 
   gosec-sarif:
     # Security-tab upload the reusable deliberately omits (fork PRs run
-    # read-only): caller-side, non-PR events only. Skips when go-ci
-    # failed: the finding count stays in that run's summary and the
-    # weekly issue links the run.
+    # read-only): caller-side, non-PR events only, whether or not go-ci
+    # passed, so a scheduled finding run still uploads its SARIF.
     #
     # always() is load-bearing: changes skips on push/schedule/dispatch,
     # and a skipped need skips this job unless the condition overrides it
     # (the pre-move workflow used always() here for the same reason; the
-    # move dropped it and the first merge-push skipped the upload).
+    # move dropped it and the first merge-push skipped the upload). The
+    # upload step itself is gated on the report file so a missing artifact
+    # (a go-ci that never reached the scan) skips instead of failing.
     needs: [go-ci]
-    if: always() && github.event_name != 'pull_request' && needs.go-ci.result == 'success'
+    if: always() && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # The only job with security-events:write.
@@ -211,8 +212,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          gh run download "$GITHUB_RUN_ID" -n "gosec-ingester" --dir .
+          gh run download "$GITHUB_RUN_ID" -n "gosec-ingester" --dir . || echo "gosec artifact unavailable (go-ci did not reach the scan); nothing to upload"
       - name: Upload SARIF
+        if: hashFiles('gosec.sarif') != ''
         uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           sarif_file: gosec.sarif
