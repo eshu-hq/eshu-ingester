@@ -1,0 +1,18 @@
+.github/workflows/ci.yml
+  h_78a442cba0b3e6 61-65
+Makefile
+  h_78a442cba0b3e6 10-11,15
+docs/ci/coverage-4.md
+  h_78a442cba0b3e6 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0ea908801dea13ae3530abbd74985b537237dc83",
+  "prompts": {},
+  "humans": {
+    "h_78a442cba0b3e6": {
+      "author": "Allen Sanabria <asanabria6910@gmail.com>"
+    }
+  }
+}
