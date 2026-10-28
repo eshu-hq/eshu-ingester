@@ -7,12 +7,12 @@
 # activate automatically when go.mod lands.
 #
 # The coverage floor is a percentage of statements and may only rise as
-# tests land. The finish line is 90%. Until the first Go code lands and the
-# baseline is measured, COVERAGE_FLOOR stays at the workflow placeholder.
+# tests land. The finish line is 90%. Baseline measured with the first Go
+# code (#10): 100.0%.
 
 GOLANGCI_VERSION ?= 2.12.2
 ACTIONLINT_VERSION ?= 1.7.12
-COVERAGE_FLOOR ?= 0
+COVERAGE_FLOOR ?= 100.0
 
 GOLANGCI := go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v$(GOLANGCI_VERSION)
 ACTIONLINT := go run github.com/rhysd/actionlint/cmd/actionlint@v$(ACTIONLINT_VERSION)

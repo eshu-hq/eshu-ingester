@@ -58,11 +58,11 @@ env:
   ACTIONLINT_VERSION: 1.7.12
   SHELLCHECK_VERSION: 0.11.0
   SHELLCHECK_SHA256: 8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198
-  # Placeholder until the first Go code lands: the Go-landing child runs the
-  # full suite, measures statement coverage (-covermode=atomic), sets this
-  # floor at that baseline, and files the test-writing work to reach 90%.
-  # The floor may only rise; never lower it to move the number.
-  COVERAGE_FLOOR: "0"
+  # Baseline measured with the first Go code (#10, 2026-10-28): 100.0% of
+  # statements (-covermode=atomic) over internal/intake. The floor may only
+  # rise; never lower it to move the number. The finish line is 90%: already
+  # met, so no test-writing follow-up was filed.
+  COVERAGE_FLOOR: "100.0"
 
 jobs:
   changes:
