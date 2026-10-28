@@ -1,0 +1,14 @@
+probe_shell.sh
+  h_78a442cba0b3e6 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d8194e3c74599d6c919eccb9cda12b1d3f6337a3",
+  "prompts": {},
+  "humans": {
+    "h_78a442cba0b3e6": {
+      "author": "Allen Sanabria <asanabria6910@gmail.com>"
+    }
+  }
+}
