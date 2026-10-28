@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 eshu-hq
+
 package intake_test
 
 import (
