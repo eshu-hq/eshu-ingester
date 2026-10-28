@@ -28,13 +28,16 @@ cannot own (weekly findings issue, Security-tab upload).
   (failure-gated issue linking the run). `gosec-sarif` keeps the
   Security-tab upload on non-PR events (artifact `gosec-ingester`).
 
-## Proof (this PR's CI)
+## Proof
 
-- `go-ci / ci-complete` green with all needed lanes passing or
-  legitimately skipped; nested names observed in the check list.
-- `go-ci / race` enforces the 100.0 floor; `go-ci / image` runs the
-  digest-pin command.
-- Fork PRs still run advisory-only (unchanged caller conditions).
+PR #16's CI (run 40783452540, two settled reads): `go-ci / lint`,
+`test`, `race`, `image`, `gosec`, `actionlint`, and `go-ci /
+ci-complete` green; `boundary`, `govulncheck` (no dep change), `shell`,
+and the caller-side jobs legitimately skipped. `go-ci / race` enforced
+the 100.0 floor; `go-ci / image` ran the digest-pin command. The
+merge-push run 40783999113 repeated the full set green on main, which
+is when the ruleset was switched. Fork PRs still run advisory-only
+(unchanged caller conditions; proven by probes #14, #18, #19).
 
 ## Ruleset
 
