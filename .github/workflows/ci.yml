@@ -191,8 +191,13 @@ jobs:
     # read-only): caller-side, non-PR events only. Skips when go-ci
     # failed: the finding count stays in that run's summary and the
     # weekly issue links the run.
+    #
+    # always() is load-bearing: changes skips on push/schedule/dispatch,
+    # and a skipped need skips this job unless the condition overrides it
+    # (the pre-move workflow used always() here for the same reason; the
+    # move dropped it and the first merge-push skipped the upload).
     needs: [go-ci]
-    if: github.event_name != 'pull_request'
+    if: always() && github.event_name != 'pull_request' && needs.go-ci.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # The only job with security-events:write.
