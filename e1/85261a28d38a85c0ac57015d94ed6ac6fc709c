@@ -1,0 +1,16 @@
+.github/workflows/ci.yml
+  h_78a442cba0b3e6 3-10,12-22,42-43,118-121,123-125,128-163,165-169,175-176,178,180-184,186,190-195,209
+docs/ci/reusable-7.md
+  h_78a442cba0b3e6 1-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e185261a28d38a85c0ac57015d94ed6ac6fc709c",
+  "prompts": {},
+  "humans": {
+    "h_78a442cba0b3e6": {
+      "author": "Allen Sanabria <asanabria6910@gmail.com>"
+    }
+  }
+}
