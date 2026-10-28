@@ -1,0 +1,24 @@
+.dockerignore
+  h_78a442cba0b3e6 1-11
+Dockerfile
+  h_78a442cba0b3e6 1-15
+Makefile
+  h_78a442cba0b3e6 30,37
+cmd/ingester/main.go
+  h_78a442cba0b3e6 1-50
+cmd/ingester/main_test.go
+  h_78a442cba0b3e6 1-108
+docs/ci/supply-chain-6.md
+  h_78a442cba0b3e6 1-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14e001affad8acf3870238444f9794bc60d0c13d",
+  "prompts": {},
+  "humans": {
+    "h_78a442cba0b3e6": {
+      "author": "Allen Sanabria <asanabria6910@gmail.com>"
+    }
+  }
+}
