@@ -42,3 +42,12 @@ Before merge the active ruleset requires `ci-complete`; after the
 merge-push proves `go-ci / ci-complete` green on main, the required
 context is switched to the nested name (delete + recreate the same
 ruleset), verified with a second settled read.
+
+## Follow-up fix (same issue)
+
+The first merge-push skipped `gosec-sarif`: the move dropped the
+`always()` the pre-move workflow carried, and a skipped `changes` job
+(a PR-only job) skips downstream jobs whose condition does not
+override it. Restored as `always() && event != PR && go-ci succeeded`,
+which preserves the old behavior on every event (scheduled-findings
+was never affected: `failure()` already overrides).
