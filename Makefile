@@ -27,14 +27,14 @@ lint:
 	$(GOLANGCI) run ./... && \
 	$(GOLANGCI) fmt --diff ./... && \
 	go mod tidy -diff && \
-	over=$$(git ls-files '*.go' | while IFS= read -r f; do \
+	{ over=$$(git ls-files '*.go' | while IFS= read -r f; do \
 		n=$$(wc -l < "$$f"); \
 		if [ "$$n" -gt 500 ]; then printf '%s (%s lines)\n' "$$f" "$$n"; fi; \
 	done); \
 	if [ -n "$$over" ]; then \
 		echo "Files over the 500-line cap:"; echo "$$over"; exit 1; \
 	fi; \
-	echo "500-line cap: OK ($$(git ls-files '*.go' | wc -l) files checked)"; \
+	echo "500-line cap: OK ($$(git ls-files '*.go' | wc -l) files checked)"; }; \
 	fi
 	@$(ACTIONLINT)
 

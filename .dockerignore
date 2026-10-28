@@ -1,0 +1,11 @@
+# The image build needs go.mod and the Go sources. Everything else stays
+# out of the build context so the context is small and a change to a doc
+# or CI file cannot change the image.
+.git
+.github
+.gitignore
+.dockerignore
+*.md
+docs
+coverage.out
+cover.func
