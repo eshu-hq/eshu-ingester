@@ -35,7 +35,7 @@ exactly what a local run does: accept or reject one ID, then exit.
 
 ## Shortest path in
 
-You'll need Go 1.26.10 (the `go` line in [go.mod](go.mod)). The module
+You'll need Go 1.26.11 (the `go` line in [go.mod](go.mod)). The module
 has no third-party dependencies. Build the binary first, because
 `go run` would mask the exit codes and those are the whole point:
 
@@ -65,10 +65,12 @@ the container run and what CI checks.
 
 ## Related repos
 
-Eshu core (`eshu-hq/eshu`) is where fact processing lives today, and
-where this component's tracking issues live. Nothing calls this repo yet
-and it calls nothing back: [go.mod](go.mod) declares no requirements at
-all, and the code uses only the Go standard library.
+[Eshu core](https://github.com/eshu-hq/eshu) is where fact processing
+lives today, and where this component's tracking issues live. Nothing
+calls this repo yet and it calls nothing back: [go.mod](go.mod) declares
+no requirements at all, and the code uses only the Go standard library.
+See [Start Here](https://github.com/eshu-hq/eshu/blob/main/docs/public/start-here.md) and the 31-repo
+[Repository Map](https://github.com/eshu-hq/eshu/blob/main/REPOSITORIES.md) for the full org layout.
 
 ## Development
 
